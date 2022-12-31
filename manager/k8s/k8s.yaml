@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: minecraft-server-controller-service-account
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: minecraft-server-role-patcher
+rules:
+- apiGroups: ["", "apps"]
+  resources: ["deployments", "services"]
+  resourceNames: ["minecraft-server-deployment", "minecraft-server-java-service"]
+  verbs: ["patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: minecraft-server-role-patcher
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: minecraft-server-role-patcher
+subjects:
+- kind: ServiceAccount
+  name: minecraft-server-controller-service-account
+  namespace: default
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minecraft-server-manager-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minecraft-server-manager
+  template:
+    metadata:
+      labels:
+        app: minecraft-server-manager
+        app.kubernetes.io/name: minecraft-fake-server
+    spec:
+      serviceAccountName: minecraft-server-controller-service-account
+      containers:
+        - name: minecraft-server-manager
+          image: axel7083/dev:minecraft-manager-v1w
+          ports:
+            - containerPort: 25565
+          env:
+            - name: PERMANENT_HOST
+              value: "minecraft-server-java-permanent-service"
+            - name: K8S_MC_SERVICE
+              value: "minecraft-server-java-service"
+            - name: K8S_MC_DEPLOYMENT
+              value: "minecraft-server-deployment"
+            - name: K8S_MC_NAMESPACE
+              value: "default"
+            - name: WAITING_TIME
+              value: "800" # 60 * 5 (5 minutes)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minecraft-server-java-permanent-service
+spec:
+  selector:
+    app.kubernetes.io/name: minecraft-server
+  ports:
+    - protocol: TCP
+      port: 25565
+      targetPort: 25565

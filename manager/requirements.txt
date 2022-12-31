@@ -1,0 +1,2 @@
+kubernetes~=25.3.0
+mcstatus~=10.0.1

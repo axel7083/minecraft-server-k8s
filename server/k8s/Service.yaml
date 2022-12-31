@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: minecraft-server-java-service
+spec:
+  selector:
+    app.kubernetes.io/name: minecraft-server
+  ports:
+    - protocol: TCP
+      port: 25565
+      targetPort: 25565
+  clusterIP: 10.152.183.194
+  clusterIPs:
+    - 10.152.183.194
+  type: ClusterIP
+  sessionAffinity: None
+  ipFamilies:
+    - IPv4
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minecraft-server-bedrock-service
+spec:
+  selector:
+    app.kubernetes.io/name: minecraft-server
+  ports:
+    - protocol: UDP
+      port: 19132
+      targetPort: 19132
+  clusterIP: 10.152.183.195
+  clusterIPs:
+    - 10.152.183.195
+  type: ClusterIP
+  sessionAffinity: None
+  ipFamilies:
+    - IPv4

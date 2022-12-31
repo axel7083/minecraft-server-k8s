@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minecraft-server-deployment
+  labels:
+    app: minecraft-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minecraft-server
+  template:
+    metadata:
+      labels:
+        app: minecraft-server
+        app.kubernetes.io/name: minecraft-server
+    spec:
+      containers:
+        - name: minecraft-server
+          image: axel7083/dev:minecraft-server-v1.4c
+          ports:
+            - name: java
+              containerPort: 25565
+            - name: bedrock
+              containerPort: 19132
+          env:
+            - name: REVISION
+              value: "1.19.3"
+            - name: EULA
+              value: "true"
+            - name: JAVA_OPTS
+              value: "-Xms2G -Xmx2G -Xmn384m -XX:+AlwaysPreTouch -XX:+DisableExplicitGC -XX:+ParallelRefProcEnabled -XX:+PerfDisableSharedMem -XX:+UseCompressedOops -XX:-UsePerfData -XX:MaxGCPauseMillis=200 -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 -XX:+UseG1GC -XX:InitiatingHeapOccupancyPercent=50 -XX:G1HeapRegionSize=1 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=8"
+          volumeMounts:
+            - mountPath: /server
+              name: minecraft-server-pvc
+            - mountPath: /tmp/properties
+              readOnly: true
+              name: minecraft-server-properties
+      volumes:
+        - name: minecraft-server-pvc
+          persistentVolumeClaim:
+            claimName: minecraft-server-pvc
+        - name: minecraft-server-properties
+          configMap:
+            name: minecraft-server-properties
+            items:
+              - key: server.properties
+                path: server.properties
