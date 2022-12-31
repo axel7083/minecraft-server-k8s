@@ -45,7 +45,7 @@ class SocketServer:
         if self.start_date == -1:
             return "The server is currently offline\nIt will automatically start if a player try to connect."
         else:
-            return "The server is start booting {seconds} seconds ago. It should be ready soon.".format(seconds=int(time.time()-self.start_date))
+            return "The server started booting {seconds} seconds ago. It should be ready soon.".format(seconds=int(time.time()-self.start_date))
 
     def on_new_client(self, client_socket, addr, queue: Queue):
         data = client_socket.recv(1024)
