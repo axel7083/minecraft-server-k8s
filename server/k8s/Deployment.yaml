@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: minecraft-server
-          image: axel7083/dev:minecraft-server-v1.5
+          image: axel7083/dev:minecraft-server-v2.0
           ports:
             - name: java
               containerPort: 25565
