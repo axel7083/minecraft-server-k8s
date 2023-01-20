@@ -1,4 +1,4 @@
-FROM openjdk:18.0.2.1-jdk-bullseye
+FROM openjdk:16.0.2-jdk-bullseye
 
 COPY build.sh /build.sh
 
