@@ -16,12 +16,12 @@ fi
 # Set current directory to our server root
 cd "/server/$REVISION" || { echo "Cannot enter /server folder"; exit 1; }
 
-mkdir "/server/$REVISION/plugins"
+mkdir -p "/server/$REVISION/plugins"
 
 if [ "$BEDROCK" == "true" ]; then
   wget -nv -O "/server/$REVISION/plugins/Geyser-Spigot.jar" https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar
   wget -nv -O "/server/$REVISION/plugins/Floodgate-Spigot.jar" https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar
-else
+fi
 
 # Ensure the EULA has been accepted.
 if [ "$EULA" == "true" ]; then
